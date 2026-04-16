@@ -29,26 +29,44 @@
 #include "timer.h"
 #include "optimization.h"
 
-char *FileName;
+#include <string.h>
+
+// Global configuration variables
+int use_cw_init = 0;     // 0 = random, 1 = cw
+int use_best_pivot = 0;  // 0 = first, 1 = best
+int neigh_type = 0;      // 0 = transpose, 1 = exchange, 2 = insert
+char *FileName = NULL;
 
 void readOpts(int argc, char **argv) {
-  char opt;
+    // Loop through all command line arguments starting from index 1
+    for (int i = 1; i < argc; i++) {
+        // Initialization
+        if (strcmp(argv[i], "--cw") == 0) use_cw_init = 1;
+        else if (strcmp(argv[i], "--random") == 0) use_cw_init = 0;
+        
+        // Pivoting
+        else if (strcmp(argv[i], "--first") == 0) use_best_pivot = 0;
+        else if (strcmp(argv[i], "--best") == 0) use_best_pivot = 1;
+        
+        // Neighborhoods
+        else if (strcmp(argv[i], "--transpose") == 0) neigh_type = 0;
+        else if (strcmp(argv[i], "--exchange") == 0) neigh_type = 1;
+        else if (strcmp(argv[i], "--insert") == 0) neigh_type = 2;
+        
+        // Instance File
+        else if (strcmp(argv[i], "-i") == 0) {
+            // Make sure there is actually a file name after -i
+            if (i + 1 < argc) {
+                FileName = strdup(argv[++i]); // Grab the next argument and increment 'i'
+            }
+        }
+    }
 
-  FileName = NULL;
-  while ( (opt = getopt(argc, argv, "i:")) > 0 )  
-      switch (opt) {
-	  case 'i': /* Instance file */
-	      FileName = (char *)malloc(strlen(optarg)+1);
-	      strncpy(FileName, optarg, strlen(optarg));
-	      break;
-	  default:
-	      fprintf(stderr, "Option %c not managed.\n", opt);
-      }
-    
-  if ( !FileName ) {
-    printf("No instance file provided (use -i <instance_name>). Exiting.\n");
-    exit(1);
-  }
+    // Safety check
+    if (FileName == NULL) {
+        printf("Error: No instance file provided. Use -i <filename>\n");
+        exit(1);
+    }
 }
 
 
@@ -57,7 +75,6 @@ int main (int argc, char **argv)
 {
   long int i,j;
   long int *currentSolution;
-  int cost, newCost, temp, firstRandomPosition, secondRandomPosition;
 
   /* Do not buffer output */
   setbuf(stdout,NULL);
@@ -73,7 +90,7 @@ int main (int argc, char **argv)
 
   /* Read instance file */
   CostMat = readInstance(FileName);
-  printf("Data have been read from instance file. Size of instance = %ld.\n\n", PSize);
+  // printf("Data have been read from instance file. Size of instance = %ld.\n\n", PSize);
 
   /* initialize random number generator, deterministically based on instance.
    * To do this we simply set the seed to the sum of elements in the matrix, so it is constant per-instance,
@@ -82,60 +99,31 @@ int main (int argc, char **argv)
     for (i=0; i < PSize; ++i)
       for (j=0; j < PSize; ++j)
         Seed += (long int) CostMat[i][j];
-  printf("Seed used to initialize RNG: %ld.\n\n", Seed);
+  // printf("Seed used to initialize RNG: %ld.\n\n", Seed);
   
   /* starts time measurement */
-  start_timers();
+  start_timers();currentSolution = (long int *)malloc(PSize * sizeof(long int));
 
-  /* A solution is just a vector of int with the same size as the instance */
-  currentSolution = (long int *)malloc(PSize * sizeof(long int));
+  // 1. INITIALIZATION
+  if (use_cw_init == 1) {
+      createCWSolution(currentSolution);
+      // printf("Initialization: CW Heuristic\n");
+  } else {
+      createRandomSolution(currentSolution);
+      // printf("Initialization: Random\n");
+  }
 
-  /* Create an initial random solution. 
-     The only constraint is that it should always be a permutation */
-  createRandomSolution(currentSolution);
+  // 2. RUN LOCAL SEARCH
+  // printf("Starting Local Search...\n");
+  localSearch(currentSolution, use_best_pivot, neigh_type);
 
-  /* Print solution */
-  printf("Initial solution:\n");
-  for (j=0; j < PSize; j++) 
-    printf(" %ld", currentSolution[j]);
-  printf("\n");
+  // 3. PRINT FINAL RESULTS (Clean format for the script)
+  long long int final_cost = computeCost(currentSolution);
+  double total_time = elapsed_time(VIRTUAL);
+  
+  // This output is captured by the result variable in the bash script
+  printf("%lld %g", final_cost, total_time);
 
-  /* Compute cost of solution and print it */
-  cost = computeCost(currentSolution);
-  printf("Cost of this initial solution: %d\n\n", cost);
-
-  /* Example: apply an exchange operation of two elements at random position */
-  firstRandomPosition = randInt(0,PSize-1);
-  // Ensure second position is different from first one:
-  secondRandomPosition = firstRandomPosition + randInt(1,(PSize-2));
-  if (secondRandomPosition >= PSize)
-    secondRandomPosition -= PSize;
-
-  printf("Two positions exchanged: %d and %d. ", firstRandomPosition, secondRandomPosition);
-
-  temp = currentSolution[firstRandomPosition];
-  currentSolution[firstRandomPosition] = currentSolution[secondRandomPosition];
-  currentSolution[secondRandomPosition] = temp;
-
-  printf("Solution after exchange:\n");
-  for (j=0; j < PSize; j++) 
-    printf(" %ld", currentSolution[j]);
-  printf("\n");
-
-  /* Recompute cost of solution after the exchange move */
-  /* There are some more efficient way to do this, instead of recomputing everything... */
-  newCost = computeCost(currentSolution);
-  printf("Cost of this solution after applying the exchange move: %d\n", newCost);
-
-  if (newCost == cost)
-    printf("Second solution is as good as first one\n");
-  else if (newCost > cost)
-    printf("Second solution is better than first one\n");
-  else
-    printf("Second solution is worse than first one\n");
-
-  printf("Time elapsed since we started the timer: %g\n\n", elapsed_time(VIRTUAL));
-
-
+  free(currentSolution);
   return 0;
 }

@@ -26,4 +26,11 @@ extern long int **CostMat;
 long long int computeCost ( long int *lo );
 void createRandomSolution(long int *s);
 
+// Initialization methods
+void createRandomSolution(long int *s);
+void createCWSolution(long int *s); // Add this!
+
+// Local Search engine
+void localSearch(long int *s, int pivot_rule, int neighborhood_type); // Add this!
+
 #endif
