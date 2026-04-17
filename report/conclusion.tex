@@ -1,4 +1,9 @@
 \section{Conclusions}\label{sec:conclusions}
 
-Some paragraphs for summarizing the main findings of the report and your experience in reproducing the work.
+In this work, iterative improvement and variable neighborhood descent algorithms were implemented for the linear ordering problem. For Exercise 1.1, twelve iterative improvement variants were evaluated by combining two pivoting rules, three neighborhoods, and two initialization methods. For Exercise 1.2, two VND variants were implemented using the required neighborhood orders and CW initialization.
 
+The experimental results show that the choice of neighborhood has the strongest influence on solution quality. In particular, the insert neighborhood clearly outperformed the exchange neighborhood, while transpose was by far the weakest neighborhood. The results also showed that the impact of initialization depends on the strength of the neighborhood: for transpose, CW initialization was much better than random initialization, whereas for insert the difference between random and CW was not statistically significant. In addition, the insert neighborhood with first-improvement achieved better results than with best-improvement on the tested benchmark instances.
+
+For the VND algorithms, the transpose--insert--exchange variant obtained a slightly better average deviation and a lower total runtime than the transpose--exchange--insert variant. However, the statistical tests showed that this difference in solution quality was not significant.
+
+Overall, these experiments suggest that using a strong neighborhood such as insert is more important than using a more expensive pivoting rule, and that good initialization is especially important when the neighborhood is weak. Among the tested methods, insert-based algorithms provided the best balance between solution quality and computational effort.

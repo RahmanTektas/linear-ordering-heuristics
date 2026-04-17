@@ -57,6 +57,8 @@ Exercise 1.2 algorithms:
     ./lop --cw --vnd-tei -i instances/INSTANCE
     ./lop --cw --vnd-tie -i instances/INSTANCE
 
+Exercise 2
+
 Options
 -------
 Initialization:
@@ -80,11 +82,15 @@ Run all experiments
 -------------------
 First make the script executable:
 
-    chmod +x run_experiments.sh
+    chmod +x run_experiments_exercise1.sh
+    chmod +x run_experiments_exercise2.sh
 
-Then run:
 
-    ./run_experiments.sh
+Then go to scripts folder and run:
+
+    ./run_experiments_exercise1.sh
+    ./run_experiments_exercise2.sh
+
 
 This generates the raw data files used for the analysis.
 
@@ -96,10 +102,19 @@ The raw data can be analyzed in R to compute:
 - standard deviations
 - statistical tests
 
+First make the script executable:
+    chmod +x make_r_files.sh
+
+Then go to scripts folder and run:
+    Rscript test_ex1.R
+    Rscript test_ex2.R
+
+
 Submission
 ----------
 The submission contains:
 - report in PDF
 - source code
+- scripts to generate results inside scripts/ folder
 - README.txt
-- raw data used for statistical tests
+- raw data used for statistical tests inside results/ folder

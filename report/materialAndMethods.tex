@@ -1,4 +1,12 @@
-\section{Materials and Methods}
+\section{Materials and Methods}\label{sec:materialAndMethods}
+
+\subsection{Implementation and Reproducibility}
+
+The algorithms were implemented in C and compiled on Linux using a Makefile, which produces the executable \texttt{lop}. A single executable was used for all algorithmic variants, and the desired method was selected through command-line parameters. The source code is organized in the \texttt{src/} directory, and the Makefile is located at the root of the project. The results were saved in the \texttt{results/} directory, which contains the raw output files generated from running the experiments.
+
+Additional scripts were used to automate the experiments and generate the raw result files, inside the scripts/ folder. The main raw outputs were saved in \path{exercise1_results.txt} and \path{exercise2_vnd_results.txt}. The statistical analyses were then carried out in R language.
+
+A README file is included in the submission and contains the exact compilation and execution commands required to reproduce all experiments from the command line.
 
 \subsection{Iterative Improvement Algorithms}
 
