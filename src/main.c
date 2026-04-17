@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    /* Initialization */
+    /* initialization */
     if (use_cw_init == 1) {
         createCWSolution(currentSolution);
     } else {

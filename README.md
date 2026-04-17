@@ -94,6 +94,9 @@ Then go to scripts folder and run:
 
 This generates the raw data files used for the analysis.
 
+Then we can generate the summary by running:
+    Rscript generate_summary_exercise1.R
+
 Statistical analysis
 --------------------
 The raw data can be analyzed in R to compute:
@@ -105,9 +108,16 @@ The raw data can be analyzed in R to compute:
 First make the script executable:
     chmod +x make_r_files.sh
 
+Then run:
+    ./make_r_files.sh
+
 Then go to scripts folder and run:
     Rscript test_ex1.R
     Rscript test_ex2.R
+    Rscript test_ex1_all_wilcoxon.R
+
+macOS note:
+Rscript should work the same way on macOS if R is installed and available in the terminal. If it is not found, install R and check that Rscript is in your PATH.
 
 
 Submission

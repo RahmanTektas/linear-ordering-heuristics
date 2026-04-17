@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Runs the experiments for exercise 1.2, which includes 2 VND algorithms obtained by combining the two 
+# neighborhood orders with the CW initialization method. 
+# The results are saved in a raw format in exercise2_vnd_results.txt
+
 INSTANCE_DIR="../instances"
 EXECUTABLE="../lop"
 OUTPUT_FILE="../results/exercise2_vnd_results.txt"

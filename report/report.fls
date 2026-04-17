@@ -436,9 +436,15 @@ INPUT /home/rahman/info-h413-course/report/conclusion.tex
 INPUT /home/rahman/info-h413-course/report/conclusion.tex
 INPUT /home/rahman/info-h413-course/report/report.bbl
 INPUT /home/rahman/info-h413-course/report/report.bbl
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
+INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinLibertineTI-tlf-t1.vf
+INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1--base.tfm
 INPUT /home/rahman/info-h413-course/report/report.aux
 INPUT /home/rahman/info-h413-course/report/report.out
 INPUT /home/rahman/info-h413-course/report/report.out
+INPUT /usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc
 INPUT /usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc
 INPUT /usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc
 INPUT /usr/share/texlive/texmf-dist/fonts/enc/dvips/libertine/lbtn_oexx6f.enc
@@ -452,6 +458,7 @@ INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumT.pf
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinBiolinumTB.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineT.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTB.pfb
+INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/libertine/LinLibertineTI.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/newtx/NewTXMI.pfb
 INPUT /usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/newtx/txexs.pfb

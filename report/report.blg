@@ -2,7 +2,6 @@ This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: report.aux
 The style file: IEEEtran.bst
-I found no \citation commands---while reading file report.aux
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
@@ -14,45 +13,44 @@ Database file #1: references.bib
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 
 Done.
-You've used 0 entries,
+You've used 1 entry,
             4087 wiz_defined-function locations,
-            821 strings with 7291 characters,
-and the built_in function-call counts, 104 in all, are:
-= -- 0
-> -- 0
+            828 strings with 7434 characters,
+and the built_in function-call counts, 456 in all, are:
+= -- 33
+> -- 4
 < -- 0
-+ -- 0
-- -- 0
-* -- 19
-:= -- 27
-add.period$ -- 0
-call.type$ -- 0
++ -- 2
+- -- 1
+* -- 30
+:= -- 102
+add.period$ -- 1
+call.type$ -- 1
 change.case$ -- 0
 chr.to.int$ -- 0
-cite$ -- 0
-duplicate$ -- 0
-empty$ -- 1
-format.name$ -- 0
-if$ -- 3
+cite$ -- 1
+duplicate$ -- 29
+empty$ -- 31
+format.name$ -- 1
+if$ -- 80
 int.to.chr$ -- 0
-int.to.str$ -- 0
-missing$ -- 0
-newline$ -- 23
-num.names$ -- 0
-pop$ -- 0
+int.to.str$ -- 1
+missing$ -- 7
+newline$ -- 26
+num.names$ -- 1
+pop$ -- 12
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1
+skip$ -- 31
 stack$ -- 0
 substring$ -- 0
-swap$ -- 0
+swap$ -- 19
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 0
+type$ -- 1
 warning$ -- 0
-while$ -- 0
-width$ -- 0
-write$ -- 22
-(There was 1 error message)
+while$ -- 1
+width$ -- 2
+write$ -- 31
