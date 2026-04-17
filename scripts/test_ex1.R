@@ -34,7 +34,7 @@ labels <- c(
 data_list <- list()
 
 for (i in seq_along(files)) {
-  x <- read.table(files[i])$V1
+  x <- read.table(paste0("../results/", files[i]))$V1
 
   if (length(x) != length(best.known)) {
     stop(paste("Length mismatch for file:", files[i]))
@@ -73,7 +73,7 @@ format_p <- function(p) {
 }
 
 # Plot heatmap
-png("../results/wilcoxon_heatmap_ex1.png", width = 1500, height = 1200)
+png("../report/figures/wilcoxon_heatmap_ex1.png", width = 1500, height = 1200)
 
 heat_cols <- colorRampPalette(c("#f7fbff", "#c6dbef", "#6baed6", "#2171b5", "#08306b"))(100)
 
@@ -107,5 +107,5 @@ for (i in 1:n) {
 
 dev.off()
 
-cat("Saved figure to ../results/wilcoxon_heatmap_ex1.png\n")
+cat("Saved figure to ../report/figures/wilcoxon_heatmap_ex1.png\n")
 cat("Saved matrix to ../results/wilcoxon_pvalues_ex1.csv\n")

@@ -354,8 +354,8 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tl
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1.tfm
 INPUT /home/rahman/info-h413-course/report/intro.tex
 INPUT /home/rahman/info-h413-course/report/intro.tex
-INPUT /home/rahman/info-h413-course/report/related.tex
-INPUT /home/rahman/info-h413-course/report/related.tex
+INPUT /home/rahman/info-h413-course/report/problemDescription.tex
+INPUT /home/rahman/info-h413-course/report/problemDescription.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-ot1.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/newtx/nxlmi.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/newtx/ntxsy.tfm
@@ -367,8 +367,8 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/newtx/ntxsym.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/newtx/ntxsyc.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/newtx/ntxexa.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/latex-fonts/lasy9.tfm
-INPUT /home/rahman/info-h413-course/report/definition.tex
-INPUT /home/rahman/info-h413-course/report/definition.tex
+INPUT /home/rahman/info-h413-course/report/materialsAndMethods.tex
+INPUT /home/rahman/info-h413-course/report/materialsAndMethods.tex
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/public/libertine/LinBiolinumTB-tlf-t1.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/libertine/LinBiolinumTB-tlf-t1--base.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map

@@ -9,9 +9,14 @@ Files
 - src/                  source code
 - instances/            LOP instances
 - best_known/           best known solution values
+- results/              raw data files used for the analysis, the exercise1_results.txt and exercise2_results.txt are the main files to store results.
+- scripts/              scripts folder to generate results, run experiments, statsic analysis
+- report/               folder containing the report material in latex format
 - Makefile              compilation
-- run_experiments.sh    script to run all experiments
 - lop                   executable generated after compilation
+- report.pdf            report in PDF
+
+
 
 Compilation
 -----------
