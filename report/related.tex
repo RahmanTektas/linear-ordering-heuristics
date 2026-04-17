@@ -1,0 +1,19 @@
+\section{Problem Description}\label{sec:related}
+
+
+Let \(C\) be an \(n \times n\) matrix, where \(c_{ij}\) denotes the entry in row \(i\) and column \(j\). A solution of the LOP is a permutation \(\pi\) of the indices \(\{1,\dots,n\}\). The objective function is
+
+\[
+f(\pi) = \sum_{i=1}^{n} \sum_{j=i+1}^{n} c_{\pi(i)\pi(j)}.
+\]
+
+The goal is to find a permutation \(\pi\) that maximizes \(f(\pi)\).
+\\
+Three neighborhoods were considered in this work:
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Transpose}: swap two adjacent elements.
+    \item \textbf{Exchange}: swap two elements at arbitrary positions.
+    \item \textbf{Insert}: remove one element from a position and insert it at another position.
+\end{itemize}
+
+Transpose is the smallest neighborhood, while exchange and insert allow larger changes to the ordering.

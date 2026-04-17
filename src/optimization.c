@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <values.h>
+#include <limits.h>
 
 #include "optimization.h" 
 #include "instance.h"
@@ -61,129 +62,261 @@ void createRandomSolution(long int *s) {
     free ( random );
 }
 
-/* --- SPEED-UP SECTION (Mandatory for full marks) --- */
+void createCWSolution(long int *s) {
+    int *used = (int *)calloc(PSize, sizeof(int));
+    if (used == NULL) {
+        fprintf(stderr, "Memory allocation failed in createCWSolution.\n");
+        exit(EXIT_FAILURE);
+    }
 
-long long int getDeltaTranspose(long int *s, int i) {
-    // Page 20 of slides: Simple O(1) swap logic
-    return CostMat[s[i+1]][s[i]] - CostMat[s[i]][s[i+1]];
+    for (int pos = 0; pos < PSize; pos++) {
+        long long int best_score = LLONG_MIN;
+        int best_elem = -1;
+
+        for (int k = 0; k < PSize; k++) {
+            if (used[k]) continue;
+
+            long long int score = 0;
+
+            for (int j = 0; j < PSize; j++) {
+                if (!used[j] && j != k) {
+                    score += CostMat[k][j];
+                }
+            }
+
+            if (score > best_score) {
+                best_score = score;
+                best_elem = k;
+            }
+        }
+
+        s[pos] = best_elem;
+        used[best_elem] = 1;
+    }
+
+    free(used);
 }
 
+/*  Incremental delta evaluation */
+
+/*  Transpose: swap adjacent positions i and i+1 */
+long long int getDeltaTranspose(long int *s, int i) {
+    return CostMat[s[i + 1]][s[i]] - CostMat[s[i]][s[i + 1]];
+}
+
+/*  Exchange: swap positions i and j */
 long long int getDeltaExchange(long int *s, int i, int j) {
     if (i == j) return 0;
-    if (i > j) { int temp = i; i = j; j = temp; }
-    long long int delta = CostMat[s[j]][s[i]] - CostMat[s[i]][s[j]];
-    for (int k = i + 1; k < j; k++) {
-        delta += (CostMat[s[k]][s[i]] - CostMat[s[i]][s[k]]) + 
-                 (CostMat[s[j]][s[k]] - CostMat[s[k]][s[j]]);
+
+    if (i > j) {
+        int tmp = i;
+        i = j;
+        j = tmp;
     }
+
+    long long int delta = 0;
+
+    delta += CostMat[s[j]][s[i]] - CostMat[s[i]][s[j]];
+
+    for (int k = i + 1; k < j; k++) {
+        delta += (CostMat[s[k]][s[i]] - CostMat[s[i]][s[k]]);
+        delta += (CostMat[s[j]][s[k]] - CostMat[s[k]][s[j]]);
+    }
+
     return delta;
 }
 
+/*  Insert: move element at i to position j */
 long long int getDeltaInsert(long int *s, int i, int j) {
     if (i == j) return 0;
+
     long long int delta = 0;
+
     if (i < j) {
-        for (int k = i + 1; k <= j; k++)
+        for (int k = i + 1; k <= j; k++) {
             delta += CostMat[s[k]][s[i]] - CostMat[s[i]][s[k]];
+        }
     } else {
-        for (int k = j; k < i; k++)
+        for (int k = j; k < i; k++) {
             delta += CostMat[s[i]][s[k]] - CostMat[s[k]][s[i]];
+        }
     }
+
     return delta;
 }
 
-/* --- MOVE APPLICATION SECTION --- */
-
+/*
+    Move application
+    type: 0=transpose, 1=exchange, 2=insert */
 void applyMove(long int *s, int i, int j, int type) {
-    if (type == 0) { // Transpose
-        long int tmp = s[i]; s[i] = s[i+1]; s[i+1] = tmp;
-    } else if (type == 1) { // Exchange
-        long int tmp = s[i]; s[i] = s[j]; s[j] = tmp;
-    } else if (type == 2) { // Insert
+    if (type == 0) {
+        long int tmp = s[i];
+        s[i] = s[i + 1];
+        s[i + 1] = tmp;
+    } else if (type == 1) {
+        long int tmp = s[i];
+        s[i] = s[j];
+        s[j] = tmp;
+    } else {
         long int val = s[i];
-        if (i < j) for (int k = i; k < j; k++) s[k] = s[k+1];
-        else for (int k = i; k > j; k--) s[k] = s[k-1];
+
+        if (i < j) {
+            for (int k = i; k < j; k++) {
+                s[k] = s[k + 1];
+            }
+        } else {
+            for (int k = i; k > j; k--) {
+                s[k] = s[k - 1];
+            }
+        }
+
         s[j] = val;
     }
 }
 
-/* --- MASTER SEARCH LOOP --- */
-
+/*  Local search
+    pivot_rule: 0 = first-improvement, 1 = best-improvement
+    neighborhood: 0 = transpose, 1 = exchange, 2 = insert
+*/
 void localSearch(long int *s, int pivot_rule, int neighborhood) {
-    int improvement = 1;
-    while (improvement) {
-        improvement = 0;
+    int improved = 1;
+
+    while (improved) {
+        improved = 0;
         long long int best_delta = 0;
-        int best_i = -1, best_j = -1;
+        int best_i = -1;
+        int best_j = -1;
 
-        for (int i = 0; i < PSize; i++) {
-            // Adjust j loop based on neighborhood type
-            int j_start = (neighborhood == 0) ? i + 1 : 0;
-            int j_end = (neighborhood == 0) ? i + 2 : PSize;
-            if (j_end > PSize) j_end = PSize;
-
-            for (int j = j_start; j < j_end; j++) {
-                if (i == j) continue;
-                if (neighborhood == 1 && i >= j) continue; // Avoid double counting exchanges
-
-                long long int delta = 0;
-                if (neighborhood == 0) delta = getDeltaTranspose(s, i);
-                else if (neighborhood == 1) delta = getDeltaExchange(s, i, j);
-                else delta = getDeltaInsert(s, i, j);
+        if (neighborhood == 0) {
+            for (int i = 0; i < PSize - 1; i++) {
+                long long int delta = getDeltaTranspose(s, i);
 
                 if (delta > 0) {
-                    if (pivot_rule == 0) { // FIRST IMPROVEMENT
-                        applyMove(s, i, j, neighborhood);
-                        improvement = 1;
-                        goto restart_search; // Immediately restart scan as per slides
-                    } else if (delta > best_delta) { // BEST IMPROVEMENT
+                    if (pivot_rule == 0) {
+                        applyMove(s, i, i + 1, 0);
+                        improved = 1;
+                        goto next_iteration;
+                    } else if (delta > best_delta) {
                         best_delta = delta;
-                        best_i = i; best_j = j;
+                        best_i = i;
+                        best_j = i + 1;
+                    }
+                }
+            }
+        } else if (neighborhood == 1) {
+            for (int i = 0; i < PSize - 1; i++) {
+                for (int j = i + 1; j < PSize; j++) {
+                    long long int delta = getDeltaExchange(s, i, j);
+
+                    if (delta > 0) {
+                        if (pivot_rule == 0) {
+                            applyMove(s, i, j, 1);
+                            improved = 1;
+                            goto next_iteration;
+                        } else if (delta > best_delta) {
+                            best_delta = delta;
+                            best_i = i;
+                            best_j = j;
+                        }
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < PSize; i++) {
+                for (int j = 0; j < PSize; j++) {
+                    if (i == j) continue;
+
+                    long long int delta = getDeltaInsert(s, i, j);
+
+                    if (delta > 0) {
+                        if (pivot_rule == 0) {
+                            applyMove(s, i, j, 2);
+                            improved = 1;
+                            goto next_iteration;
+                        } else if (delta > best_delta) {
+                            best_delta = delta;
+                            best_i = i;
+                            best_j = j;
+                        }
                     }
                 }
             }
         }
-        if (best_delta > 0) {
+
+        if (pivot_rule == 1 && best_delta > 0) {
             applyMove(s, best_i, best_j, neighborhood);
-            improvement = 1;
+            improved = 1;
         }
-        restart_search:;
+
+next_iteration:
+        ;
     }
 }
 
-void createCWSolution(long int *s) {
-    // Array to remember which elements we've already put in our solution
-    int *already_placed = (int *)calloc(PSize, sizeof(int));
-    
-    // Loop to place one element at a time, from position 0 to PSize-1
-    for (int pos = 0; pos < PSize; pos++) {
-        long long int best_score = -999999999999; // Start with a super low score
-        int best_element = -1;
-
-        // Check every single element to see if it's the best one to place next
-        for (int k = 0; k < PSize; k++) {
-            if (already_placed[k] == 0) { // If we haven't placed it yet
-                long long int score = 0;
-                
-                // Compare 'k' against everything we have already placed
-                for (int i = 0; i < pos; i++) {
-                    long int placed_elem = s[i];
-                    // Score = (Edges from placed to k) MINUS (Edges from k to placed)
-                    score += CostMat[placed_elem][k] - CostMat[k][placed_elem];
-                }
-                
-                // If this is the best score we've seen, remember it
-                if (score > best_score || best_element == -1) {
-                    best_score = score;
-                    best_element = k;
+/*  VND helper function, one first-improvement step in one neighborhood
+*/
+static int firstImprovementStep(long int *s, int neighborhood) {
+    if (neighborhood == 0) {
+        for (int i = 0; i < PSize - 1; i++) {
+            long long int delta = getDeltaTranspose(s, i);
+            if (delta > 0) {
+                applyMove(s, i, i + 1, 0);
+                return 1;
+            }
+        }
+    } else if (neighborhood == 1) {
+        for (int i = 0; i < PSize - 1; i++) {
+            for (int j = i + 1; j < PSize; j++) {
+                long long int delta = getDeltaExchange(s, i, j);
+                if (delta > 0) {
+                    applyMove(s, i, j, 1);
+                    return 1;
                 }
             }
         }
-        
-        // Put the winning element into our solution array
-        s[pos] = best_element;
-        already_placed[best_element] = 1;
+    } else if (neighborhood == 2) {
+        for (int i = 0; i < PSize; i++) {
+            for (int j = 0; j < PSize; j++) {
+                if (i == j) continue;
+                long long int delta = getDeltaInsert(s, i, j);
+                if (delta > 0) {
+                    applyMove(s, i, j, 2);
+                    return 1;
+                }
+            }
+        }
     }
-    
-    free(already_placed);
+
+    return 0;
+}
+
+/*  VND
+    order_type:
+    0 -> transpose, exchange, insert
+    1 -> transpose, insert, exchange
+*/
+void VND(long int *s, int order_type) {
+    int order[3];
+
+    if (order_type == 0) {
+        order[0] = 0;  /* transpose */
+        order[1] = 1;  /* exchange */
+        order[2] = 2;  /* insert */
+    } else {
+        order[0] = 0;  /* transpose */
+        order[1] = 2;  /* insert */
+        order[2] = 1;  /* exchange */
+    }
+
+    int i = 0;
+
+    while (i < 3) {
+        int improved = firstImprovementStep(s, order[i]);
+
+        if (improved) {
+            i = 0;   /* restart from first neighborhood */
+        } else {
+            i++;
+        }
+    }
 }

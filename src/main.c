@@ -31,99 +31,105 @@
 
 #include <string.h>
 
-// Global configuration variables
-int use_cw_init = 0;     // 0 = random, 1 = cw
-int use_best_pivot = 0;  // 0 = first, 1 = best
-int neigh_type = 0;      // 0 = transpose, 1 = exchange, 2 = insert
+/* Global configuration variables */
+int use_cw_init = 0;      /* 0 = random, 1 = cw */
+int use_best_pivot = 0;   /* 0 = first, 1 = best */
+int neigh_type = 0;       /* 0 = transpose, 1 = exchange, 2 = insert */
+int use_vnd = 0;          /* 0 = normal local search, 1 = VND */
+int vnd_order_type = 0;   /* 0 = tei, 1 = tie */
 char *FileName = NULL;
 
 void readOpts(int argc, char **argv) {
-    // Loop through all command line arguments starting from index 1
     for (int i = 1; i < argc; i++) {
-        // Initialization
+        /* Initialization */
         if (strcmp(argv[i], "--cw") == 0) use_cw_init = 1;
         else if (strcmp(argv[i], "--random") == 0) use_cw_init = 0;
-        
-        // Pivoting
+
+        /* Pivoting */
         else if (strcmp(argv[i], "--first") == 0) use_best_pivot = 0;
         else if (strcmp(argv[i], "--best") == 0) use_best_pivot = 1;
-        
-        // Neighborhoods
+
+        /* Neighborhoods */
         else if (strcmp(argv[i], "--transpose") == 0) neigh_type = 0;
         else if (strcmp(argv[i], "--exchange") == 0) neigh_type = 1;
         else if (strcmp(argv[i], "--insert") == 0) neigh_type = 2;
-        
-        // Instance File
+
+        /* VND options */
+        else if (strcmp(argv[i], "--vnd-tei") == 0) {
+            use_vnd = 1;
+            vnd_order_type = 0;
+        }
+        else if (strcmp(argv[i], "--vnd-tie") == 0) {
+            use_vnd = 1;
+            vnd_order_type = 1;
+        }
+
+        /* Instance file */
         else if (strcmp(argv[i], "-i") == 0) {
-            // Make sure there is actually a file name after -i
             if (i + 1 < argc) {
-                FileName = strdup(argv[++i]); // Grab the next argument and increment 'i'
+                FileName = strdup(argv[++i]);
             }
         }
     }
 
-    // Safety check
     if (FileName == NULL) {
         printf("Error: No instance file provided. Use -i <filename>\n");
         exit(1);
     }
 }
 
+int main(int argc, char **argv) {
+    long int i, j;
+    long int *currentSolution;
 
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
 
-int main (int argc, char **argv) 
-{
-  long int i,j;
-  long int *currentSolution;
+    if (argc < 2) {
+        printf("No instance file provided (use -i <instance_name>). Exiting.\n");
+        exit(1);
+    }
 
-  /* Do not buffer output */
-  setbuf(stdout,NULL);
-  setbuf(stderr,NULL);
-  
-  if (argc < 2) {
-    printf("No instance file provided (use -i <instance_name>). Exiting.\n");
-    exit(1);
-  }
-  
-  /* Read parameters */
-  readOpts(argc, argv);
+    readOpts(argc, argv);
 
-  /* Read instance file */
-  CostMat = readInstance(FileName);
-  // printf("Data have been read from instance file. Size of instance = %ld.\n\n", PSize);
+    CostMat = readInstance(FileName);
 
-  /* initialize random number generator, deterministically based on instance.
-   * To do this we simply set the seed to the sum of elements in the matrix, so it is constant per-instance,
-   but (most likely) varies between instances */
-  Seed = (long int) 0;
-    for (i=0; i < PSize; ++i)
-      for (j=0; j < PSize; ++j)
-        Seed += (long int) CostMat[i][j];
-  // printf("Seed used to initialize RNG: %ld.\n\n", Seed);
-  
-  /* starts time measurement */
-  start_timers();currentSolution = (long int *)malloc(PSize * sizeof(long int));
+    /* constant random seed per instance */
+    Seed = 0;
+    for (i = 0; i < PSize; ++i) {
+        for (j = 0; j < PSize; ++j) {
+            Seed += (long int)CostMat[i][j];
+        }
+    }
 
-  // 1. INITIALIZATION
-  if (use_cw_init == 1) {
-      createCWSolution(currentSolution);
-      // printf("Initialization: CW Heuristic\n");
-  } else {
-      createRandomSolution(currentSolution);
-      // printf("Initialization: Random\n");
-  }
+    start_timers();
 
-  // 2. RUN LOCAL SEARCH
-  // printf("Starting Local Search...\n");
-  localSearch(currentSolution, use_best_pivot, neigh_type);
+    currentSolution = (long int *)malloc(PSize * sizeof(long int));
+    if (currentSolution == NULL) {
+        fprintf(stderr, "Memory allocation failed for currentSolution.\n");
+        exit(1);
+    }
 
-  // 3. PRINT FINAL RESULTS (Clean format for the script)
-  long long int final_cost = computeCost(currentSolution);
-  double total_time = elapsed_time(VIRTUAL);
-  
-  // This output is captured by the result variable in the bash script
-  printf("%lld %g", final_cost, total_time);
+    /* Initialization */
+    if (use_cw_init == 1) {
+        createCWSolution(currentSolution);
+    } else {
+        createRandomSolution(currentSolution);
+    }
 
-  free(currentSolution);
-  return 0;
+    if (use_vnd) {
+        VND(currentSolution, vnd_order_type);
+    } else {
+        localSearch(currentSolution, use_best_pivot, neigh_type);
+    }
+
+    long long int final_cost = computeCost(currentSolution);
+    double total_time = elapsed_time(VIRTUAL);
+
+    printf("%lld %g", final_cost, total_time);
+
+    free(currentSolution);
+    free(FileName);
+
+    return 0;
 }

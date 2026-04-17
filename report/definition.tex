@@ -1,0 +1,112 @@
+\section{Materials and Methods}
+
+\subsection{Iterative Improvement Algorithms}
+
+For exercise 1.1, iterative improvement algorithms were implemented using :
+\begin{itemize}[leftmargin=1.5em]
+    \item two pivoting rules:
+    \begin{itemize}
+        \item first-improvement
+        \item best-improvement
+    \end{itemize}
+    \item three neighborhoods:
+    \begin{itemize}
+        \item transpose
+        \item exchange
+        \item insert
+    \end{itemize}
+    \item two initialization methods:
+    \begin{itemize}
+        \item random permutation
+        \item Chenery--Watanabe (CW) heuristic
+    \end{itemize}
+\end{itemize}
+
+This yields \(2 \times 3 \times 2 = 12\) combinations.
+
+\subsection{Incremental update }
+
+
+To avoid unnecessary computations, incremental updates of the evaluation function value were implemented for each neigborhood. This makes it possible to evaluate the objective function right after a move, avoiding the recopmutation of the full objective function from scratch.
+
+Let
+\[
+\pi = (\pi_1,\pi_2,\dots,\pi_n)
+\]
+be the current permutation, and let
+\[
+f(\pi)=\sum_{h=1}^{n}\sum_{k=h+1}^{n} c_{\pi_h\pi_k}.
+\]
+
+Denote by \(\Delta = f(\pi')-f(\pi)\) the change in objective value after applying a move.
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Transpose:} swapping adjacent elements at indices \(i\) and \(i+1\):
+    \[
+    \Delta = c_{\pi_{i+1}\pi_i} - c_{\pi_i\pi_{i+1}}.
+    \]
+
+    \item \textbf{Exchange:} swapping elements at indices \(i\) and \(j\), with \(i<j\):
+    \[
+    \Delta
+    =
+    c_{\pi_j\pi_i}-c_{\pi_i\pi_j}
+    +
+    \sum_{k=i+1}^{j-1}
+    \Big(
+    c_{\pi_k\pi_i}-c_{\pi_i\pi_k}
+    +
+    c_{\pi_j\pi_k}-c_{\pi_k\pi_j}
+    \Big).
+    \]
+
+    \item \textbf{Insert:} removing the element at index \(i\) and inserting it at index \(j\):
+    
+    if \(i<j\),
+    \[
+    \Delta
+    =
+    \sum_{k=i+1}^{j}
+    \left(
+    c_{\pi_k\pi_i}-c_{\pi_i\pi_k}
+    \right),
+    \]
+    
+    and if \(i>j\),
+    \[
+    \Delta
+    =
+    \sum_{k=j}^{i-1}
+    \left(
+    c_{\pi_i\pi_k}-c_{\pi_k\pi_i}
+    \right).
+    \]
+\end{itemize}
+
+
+\subsection{Chenery--Watanabe Heuristic}
+
+This heurstic constrcuts the solution each row at a time, at each step selecting the most attractive remaining row, which is the one that maximizes the sum of elements having an influence on objective function.
+
+The attractiveness of a row \(i\) at construction step \(s\) can be defined as such :
+
+\[
+\sum_{j=s+1}^{n} c_{\pi(i)j}.
+\]
+
+This means the heursitic prefers the rows that have the highest remaining contribution to the objective function, so this method is intented to provide better intitial solutions than an uniformed random starting point.
+
+
+
+\subsection{Variable Neighborhood Descent}
+
+For exercise 1.2, 2 Variable Neighborhood Descent (VND) variants were implemented, using the neighborhood orders:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item transpose \(\rightarrow\) exchange \(\rightarrow\) insert
+    \item transpose \(\rightarrow\) insert \(\rightarrow\) exchange
+\end{enumerate}
+
+In both cases, only the first-improvement pivoting rule was used, and the CW heuristic was used for initialization.
+
+The VND algorithm starts from the first neihborhood, and if an improving move is found, it applies it and restarts from the first neighborhood. If no improving move exists it just moves to the next neighboorhood, and so on. The algorithm terminates when no improving move exists in any neighborhood.

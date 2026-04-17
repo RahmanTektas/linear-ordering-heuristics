@@ -11,4 +11,4 @@ lop: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o lop
 
 clean:
-	rm -f src/*~ src/*.o lop
+	rm -f src/*~ src/*.o lop *.txt *.png

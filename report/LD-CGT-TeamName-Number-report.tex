@@ -1,0 +1,86 @@
+\documentclass[sigconf,nonacm]{acmart}
+% \usepackage{amsmath,amssymb,amsfonts,latexsym}
+\usepackage{amsmath,amsfonts,latexsym}
+\usepackage{enumerate}
+\usepackage{xspace}
+\usepackage{epsf,picinpar}
+\usepackage{varioref}
+\usepackage{colortbl,multirow,hhline}
+\usepackage{listings}
+\makeatletter
+\let\Bbbk\relax
+\makeatother
+\usepackage{amssymb}
+\usepackage{colortbl,multirow,hhline}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{caption}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{pifont}
+\usepackage{xcolor,colortbl}
+\usepackage{url}
+\usepackage{balance}
+\usepackage{graphicx, subfigure}
+\usepackage{longtable}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{framed}
+\usepackage{morefloats}
+\usepackage[T1]{fontenc}
+\usepackage{array}
+\usepackage{pdfpages}
+\usepackage{fancybox}
+\usepackage{amsmath}
+\usepackage{flushend}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\renewcommand{\ttdefault}{cmr}
+
+%\newcommand{\limit}[1]{\textcolor{red}{\noindent \ding{46}~Page limit:~#1}\\}
+\newcommand{\todo}[1]{\textcolor{blue}{\ding{46}~#1}} 
+\newcommand{\ie}{\emph{i.e.,}\xspace}
+\newcommand{\eg}{\emph{e.g.,}\xspace}
+\newcommand{\etc}{etc.\xspace}
+\newcommand{\etal}{\emph{et~al.}\xspace} 
+
+\copyrightyear{2025}
+\acmYear{2025}
+\setcopyright{none}
+%\acmConference[LD/CGT 2024/2025]{Course LD/CGT 2024/2025 - Université Libre de Bruxelles  and Vrije Universiteit Brussel}{January, 2025}{Brussels, Belgium}
+\acmBooktitle{Course LD/CGT 2024/2025 - Université Libre de Bruxelles  and Vrije Universiteit Brussel, January 2025, Brussels (Belgium)}
+    
+\begin{document}
+
+\title{
+	{Iterative Improvement and Variable Neighborhood Descent for the Linear Ordering Problem}
+}
+
+\author{Rahman Tektas}
+\affiliation{%
+ \institution{542557 \\ ULB}
+} \email{rahman.tektas@ulb.be}
+
+
+
+
+\begin{abstract}
+This report studies local search algorithms for the Linear Ordering Problem (LOP). First, iterative improvement algorithms were implemented using two pivoting rules, first-improvement and best-improvement, combined with the three neighborhoods transpose, exchange, and insert. Two initialization methods were considered: a random permutation and the Chenery–Watanabe (CW) heuristic. This yields twelve algorithmic combinations. Second, two Variable Neighborhood Descent (VND) variants were implemented, using the neighborhood orders transpose–exchange–insert and transpose–insert–exchange, with CW initialization and first-improvement only. The algorithms were evaluated on the benchmark instances provided for the course using the average percentage deviation from the best known solutions and the total computation time. Statistical comparisons were carried out with paired Student t-tests and Wilcoxon signed-rank tests in R. 
+\end{abstract}
+
+\maketitle
+
+\input{intro}
+\input{related}
+\input{definition}
+\input{results}
+\input{discussion}
+\input{conclusion} 
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
+

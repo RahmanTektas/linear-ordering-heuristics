@@ -23,14 +23,18 @@
 
 extern long int **CostMat;
 
-long long int computeCost ( long int *lo );
-void createRandomSolution(long int *s);
+long long int computeCost(long int *s);
 
-// Initialization methods
 void createRandomSolution(long int *s);
-void createCWSolution(long int *s); // Add this!
+void createCWSolution(long int *s);
 
-// Local Search engine
-void localSearch(long int *s, int pivot_rule, int neighborhood_type); // Add this!
+long long int getDeltaTranspose(long int *s, int i);
+long long int getDeltaExchange(long int *s, int i, int j);
+long long int getDeltaInsert(long int *s, int i, int j);
+
+void applyMove(long int *s, int i, int j, int type);
+void localSearch(long int *s, int pivot_rule, int neighborhood);
+
+void VND(long int *s, int order_type);
 
 #endif
