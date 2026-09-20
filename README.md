@@ -1,130 +1,120 @@
-INFO-H-413 Heuristic Optimization
-Implementation Exercise 1
-Author: Rahman Tektas
+# Linear Ordering Problem — Local Search and VND
 
-This project implements the algorithms required for Implementation Exercise 1 on the Linear Ordering Problem (LOP).
+A C implementation and empirical study of local-search heuristics for the Linear Ordering Problem (LOP).
 
-Files
------
-- src/                  source code
-- instances/            LOP instances
-- best_known/           best known solution values
-- results/              raw data files used for the analysis, the exercise1_results.txt and exercise2_results.txt are the main files to store results.
-- scripts/              scripts folder to generate results, run experiments, statsic analysis
-- report/               folder containing the report material in latex format
-- Makefile              compilation
-- lop                   executable generated after compilation
-- report.pdf            report in PDF
+Developed by Rahman Tektas for the ULB Heuristic Optimization course.
 
+## Problem
 
+Given a weighted directed graph, the Linear Ordering Problem asks for a permutation that maximizes the total weight of forward arcs:
 
-Compilation
------------
-Run:
+    maximize  sum c[pi(i), pi(j)]  for every i < j
+
+LOP is NP-hard, so this project focuses on fast heuristic methods and on measuring their solution quality against best-known values.
+
+## Implemented methods
+
+### Initial solutions
+
+- random permutations
+- a constructive CW initialization strategy
+
+### Neighborhoods
+
+- transpose: swap adjacent elements
+- exchange: swap any two positions
+- insert: remove one element and insert it elsewhere
+
+### Search policies
+
+- first improvement
+- best improvement
+- Variable Neighborhood Descent with two neighborhood orders:
+  - transpose → exchange → insert
+  - transpose → insert → exchange
+
+## Experimental workflow
+
+The repository contains the complete path from implementation to analysis:
+
+1. compile the solver in C;
+2. run heuristic combinations across benchmark instances;
+3. record objective values and execution times;
+4. compare solutions with best-known values;
+5. aggregate results in R;
+6. run statistical comparisons and generate report material.
+
+## Repository structure
+
+| Path | Purpose |
+| --- | --- |
+| src/ | C implementation of the solver and neighborhoods |
+| instances/ | Benchmark LOP instances |
+| best_known/ | Reference objective values |
+| scripts/ | Experiment automation and R analysis |
+| results/ | Raw outputs and aggregated measurements |
+| report/ | LaTeX sources for the technical report |
+| report.pdf | Final experimental report |
+| Makefile | Reproducible build commands |
+
+## Build
 
     make
 
-This creates the executable:
+This produces the command-line solver:
 
     ./lop
 
-To clean compiled files, run:
+Clean generated build files with:
 
     make clean
 
-Usage
------
-Exercise 1.1 algorithms:
+## Usage
+
+Examples for individual local searches:
 
     ./lop --random --first --transpose -i instances/INSTANCE
-    ./lop --random --first --exchange -i instances/INSTANCE
-    ./lop --random --first --insert -i instances/INSTANCE
-
-    ./lop --random --best --transpose -i instances/INSTANCE
     ./lop --random --best --exchange -i instances/INSTANCE
-    ./lop --random --best --insert -i instances/INSTANCE
-
-    ./lop --cw --first --transpose -i instances/INSTANCE
-    ./lop --cw --first --exchange -i instances/INSTANCE
-    ./lop --cw --first --insert -i instances/INSTANCE
-
-    ./lop --cw --best --transpose -i instances/INSTANCE
-    ./lop --cw --best --exchange -i instances/INSTANCE
     ./lop --cw --best --insert -i instances/INSTANCE
 
-Exercise 1.2 algorithms:
+Examples for Variable Neighborhood Descent:
 
     ./lop --cw --vnd-tei -i instances/INSTANCE
     ./lop --cw --vnd-tie -i instances/INSTANCE
 
-Exercise 2
+The CLI separates initialization, pivoting rule, and neighborhood choice so experiments can compare one design decision at a time.
 
-Options
--------
-Initialization:
-- --random
-- --cw
+## Reproducing the experiments
 
-Pivoting rules:
-- --first
-- --best
-
-Neighborhoods:
-- --transpose
-- --exchange
-- --insert
-
-VND:
-- --vnd-tei   transpose -> exchange -> insert
-- --vnd-tie   transpose -> insert -> exchange
-
-Run all experiments
--------------------
-First make the script executable:
+From the scripts directory:
 
     chmod +x run_experiments_exercise1.sh
     chmod +x run_experiments_exercise2.sh
-
-
-Then go to scripts folder and run:
-
     ./run_experiments_exercise1.sh
     ./run_experiments_exercise2.sh
 
+Generate summaries and statistical tests with R:
 
-This generates the raw data files used for the analysis.
-
-Then we can generate the summary by running:
     Rscript generate_summary_exercise1.R
-
-Statistical analysis
---------------------
-The raw data can be analyzed in R to compute:
-- average percentage deviation from best known solutions
-- total computation time
-- standard deviations
-- statistical tests
-
-First make the script executable:
-    chmod +x make_r_files.sh
-
-Then run:
-    ./make_r_files.sh
-
-Then go to scripts folder and run:
     Rscript test_ex1.R
     Rscript test_ex2.R
     Rscript test_ex1_all_wilcoxon.R
 
-macOS note:
-Rscript should work the same way on macOS if R is installed and available in the terminal. If it is not found, install R and check that Rscript is in your PATH.
+## Evaluation
 
+The analysis tracks:
 
-Submission
-----------
-The submission contains:
-- report in PDF
-- source code
-- scripts to generate results inside scripts/ folder
-- README.txt
-- raw data used for statistical tests inside results/ folder
+- deviation from the best-known objective value
+- computation time
+- variability across repeated runs
+- pairwise statistical comparisons between heuristic configurations
+
+This makes the project an experimental engineering study rather than only an algorithm implementation.
+
+## What this project demonstrates
+
+- translating combinatorial-optimization ideas into efficient C
+- designing modular neighborhood and pivoting strategies
+- building reproducible benchmark pipelines
+- separating raw results from analysis code
+- using statistical evidence to compare heuristic algorithms
