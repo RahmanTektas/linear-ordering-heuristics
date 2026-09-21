@@ -1,0 +1,15 @@
+# Build artifacts
+/lop
+*.o
+*.out
+
+# IDE settings
+.vscode/
+
+# Operating-system and editor files
+.DS_Store
+*~
+
+# R session files
+.Rhistory
+.RData
