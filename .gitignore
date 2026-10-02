@@ -9,7 +9,18 @@
 # Operating-system and editor files
 .DS_Store
 *~
+*:Zone.Identifier
 
 # R session files
 .Rhistory
 .RData
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
+*.toc
