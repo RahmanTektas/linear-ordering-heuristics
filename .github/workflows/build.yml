@@ -16,3 +16,8 @@ jobs:
 
       - name: Verify executable
         run: test -x ./lop
+
+      - name: Smoke test
+        run: |
+          ./lop --cw --best --insert -i instances/N-be75eec_150 > /tmp/lop-result.txt
+          test -s /tmp/lop-result.txt
