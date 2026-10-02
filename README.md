@@ -69,3 +69,8 @@ chmod +x run_experiments_exercise2.sh
 ```
 
 The repository includes the solver, experiment scripts, raw results, statistical analysis, and final report so the comparisons can be reproduced from the implementation.
+
+
+## Attribution
+
+The course starter code is adapted from the ILSLOP implementation by Tommaso Schiavinotto, as documented in the source headers. The coursework work in this repository adds and evaluates the local-search/VND implementations, experiment automation, statistical analysis, and report. The inherited C source headers specify the GNU GPL v3 or later.
