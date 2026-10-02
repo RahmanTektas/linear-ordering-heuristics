@@ -1,120 +1,71 @@
 # Linear Ordering Problem — Local Search and VND
 
-A C implementation and empirical study of local-search heuristics for the Linear Ordering Problem (LOP).
+C implementation and experimental comparison of heuristic methods for the **Linear Ordering Problem (LOP)**.
 
-Developed by Rahman Tektas for the ULB Heuristic Optimization course.
+The project was completed for ULB's Heuristic Optimization course.
 
 ## Problem
 
-Given a weighted directed graph, the Linear Ordering Problem asks for a permutation that maximizes the total weight of forward arcs:
-
-    maximize  sum c[pi(i), pi(j)]  for every i < j
-
-LOP is NP-hard, so this project focuses on fast heuristic methods and on measuring their solution quality against best-known values.
+Given a weighted directed graph, LOP asks for a permutation that maximizes the total weight of forward arcs. Since the problem is NP-hard, this project compares several local-search strategies rather than solving large instances exactly.
 
 ## Implemented methods
 
-### Initial solutions
+**Initial solutions**
+- random permutation
+- constructive CW initialization
 
-- random permutations
-- a constructive CW initialization strategy
+**Neighborhoods**
+- transpose
+- exchange
+- insert
 
-### Neighborhoods
-
-- transpose: swap adjacent elements
-- exchange: swap any two positions
-- insert: remove one element and insert it elsewhere
-
-### Search policies
-
+**Search strategies**
 - first improvement
 - best improvement
-- Variable Neighborhood Descent with two neighborhood orders:
-  - transpose → exchange → insert
-  - transpose → insert → exchange
-
-## Experimental workflow
-
-The repository contains the complete path from implementation to analysis:
-
-1. compile the solver in C;
-2. run heuristic combinations across benchmark instances;
-3. record objective values and execution times;
-4. compare solutions with best-known values;
-5. aggregate results in R;
-6. run statistical comparisons and generate report material.
-
-## Repository structure
-
-| Path | Purpose |
-| --- | --- |
-| src/ | C implementation of the solver and neighborhoods |
-| instances/ | Benchmark LOP instances |
-| best_known/ | Reference objective values |
-| scripts/ | Experiment automation and R analysis |
-| results/ | Raw outputs and aggregated measurements |
-| report/ | LaTeX sources for the technical report |
-| report.pdf | Final experimental report |
-| Makefile | Reproducible build commands |
-
-## Build
-
-    make
-
-This produces the command-line solver:
-
-    ./lop
-
-Clean generated build files with:
-
-    make clean
-
-## Usage
-
-Examples for individual local searches:
-
-    ./lop --random --first --transpose -i instances/INSTANCE
-    ./lop --random --best --exchange -i instances/INSTANCE
-    ./lop --cw --best --insert -i instances/INSTANCE
-
-Examples for Variable Neighborhood Descent:
-
-    ./lop --cw --vnd-tei -i instances/INSTANCE
-    ./lop --cw --vnd-tie -i instances/INSTANCE
-
-The CLI separates initialization, pivoting rule, and neighborhood choice so experiments can compare one design decision at a time.
-
-## Reproducing the experiments
-
-From the scripts directory:
-
-    chmod +x run_experiments_exercise1.sh
-    chmod +x run_experiments_exercise2.sh
-    ./run_experiments_exercise1.sh
-    ./run_experiments_exercise2.sh
-
-Generate summaries and statistical tests with R:
-
-    Rscript generate_summary_exercise1.R
-    Rscript test_ex1.R
-    Rscript test_ex2.R
-    Rscript test_ex1_all_wilcoxon.R
+- Variable Neighborhood Descent (VND)
 
 ## Evaluation
 
-The analysis tracks:
+The experiments compare objective quality and runtime across benchmark instances against best-known objective values.
 
-- deviation from the best-known objective value
-- computation time
-- variability across repeated runs
-- pairwise statistical comparisons between heuristic configurations
+Twelve single-neighborhood configurations were evaluated. In the recorded experiment summary, the strongest single-neighborhood configuration averaged about **2.0% deviation from the best-known values**.
 
-This makes the project an experimental engineering study rather than only an algorithm implementation.
+The analysis also includes repeated runs and pairwise statistical comparisons in R.
 
-## What this project demonstrates
+## Repository layout
 
-- translating combinatorial-optimization ideas into efficient C
-- designing modular neighborhood and pivoting strategies
-- building reproducible benchmark pipelines
-- separating raw results from analysis code
-- using statistical evidence to compare heuristic algorithms
+```text
+src/          C implementation
+instances/    benchmark instances
+best_known/   reference objective values
+scripts/      experiment automation and R analysis
+results/      raw and aggregated results
+report/       LaTeX report sources
+Makefile      build commands
+```
+
+## Build and run
+
+```bash
+make
+./lop --cw --best --insert -i instances/INSTANCE
+```
+
+Example VND runs:
+
+```bash
+./lop --cw --vnd-tei -i instances/INSTANCE
+./lop --cw --vnd-tie -i instances/INSTANCE
+```
+
+## Reproduce the experiments
+
+```bash
+cd scripts
+chmod +x run_experiments_exercise1.sh
+chmod +x run_experiments_exercise2.sh
+./run_experiments_exercise1.sh
+./run_experiments_exercise2.sh
+```
+
+The repository includes the solver, experiment scripts, raw results, statistical analysis, and final report so the comparisons can be reproduced from the implementation.
