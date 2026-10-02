@@ -29,7 +29,6 @@
 #include "timer.h"
 #include "optimization.h"
 
-#include <string.h>
 
 /* Global configuration variables */
 int use_cw_init = 0;      /* 0 = random, 1 = cw */
